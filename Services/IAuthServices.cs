@@ -1,4 +1,5 @@
-﻿using JwtTokenTask.ViewModel;
+﻿using JwtTokenTask.Models;
+using JwtTokenTask.ViewModel;
 
 namespace JwtTokenTask.Services
 {
@@ -6,5 +7,6 @@ namespace JwtTokenTask.Services
     {
         Task<AuthModel> RegesterAsyc(RegesterModel model);
         Task<AuthModel> GetTokenAsyc(TokenRequestModel model);
+        Task<string> AddRoleAsync(AddRoleModel model);
     }
 }

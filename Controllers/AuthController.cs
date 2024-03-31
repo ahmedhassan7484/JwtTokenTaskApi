@@ -1,4 +1,5 @@
-﻿using JwtTokenTask.Services;
+﻿using JwtTokenTask.Models;
+using JwtTokenTask.Services;
 using JwtTokenTask.ViewModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -41,6 +42,19 @@ namespace JwtTokenTask.Controllers
                 return BadRequest(result.Massage);    
             }
             return Ok(result);
+        }
+        [HttpPost("addrole")]
+        public async Task<IActionResult> AddRoleAsync([FromBody] AddRoleModel model)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _authServices.AddRoleAsync(model);
+
+            if (!string.IsNullOrEmpty(result))
+                return BadRequest(result);
+
+            return Ok(model);
         }
     }
 }

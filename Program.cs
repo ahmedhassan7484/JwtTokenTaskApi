@@ -1,4 +1,5 @@
 
+using Hangfire;
 using JwtTokenTask.Helper;
 using JwtTokenTask.Models;
 using JwtTokenTask.Services;
@@ -19,6 +20,8 @@ namespace JwtTokenTask
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            builder.Services.AddHangfireServer();
+            builder.Services.AddSwaggerGen();
             builder.Services.Configure<JwtClass>(builder.Configuration.GetSection("jwt"));
             builder.Services.AddIdentity<ApplicationUser,IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddDbContext<ApplicationDbContext>(options=>options.UseSqlServer(builder.Configuration.GetConnectionString("SQLConn")));
@@ -65,7 +68,7 @@ namespace JwtTokenTask
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseHangfireDashboard();
 
             app.MapControllers();
 

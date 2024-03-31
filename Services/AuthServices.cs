@@ -15,10 +15,13 @@ namespace JwtTokenTask.Services
     {
         private readonly UserManager<ApplicationUser> _user;
         private readonly JwtClass _jwtClass;
-        public AuthServices(UserManager<ApplicationUser> user, IOptions<JwtClass> jwtClass)
+        private readonly RoleManager<IdentityRole> _roleManager;
+
+        public AuthServices(UserManager<ApplicationUser> user, IOptions<JwtClass> jwtClass , RoleManager<IdentityRole> roleManager)
         {
             _user = user;
             _jwtClass = jwtClass.Value;
+            _roleManager = roleManager;
         }
 
         public async Task<AuthModel> GetTokenAsyc(TokenRequestModel model)
@@ -111,6 +114,20 @@ namespace JwtTokenTask.Services
                 signingCredentials: signingCredentials);
 
             return jwtSecurityToken;
+        }
+        public async Task<string> AddRoleAsync(AddRoleModel model)
+        {
+            var user = await _user.FindByIdAsync(model.UserId);
+
+            if (user is null || !await _roleManager.RoleExistsAsync(model.Role))
+                return "Invalid user ID or Role";
+
+            if (await _user.IsInRoleAsync(user, model.Role))
+                return "User already assigned to this role";
+
+            var result = await _user.AddToRoleAsync(user, model.Role);
+
+            return result.Succeeded ? string.Empty : "Sonething went wrong";
         }
     }
 }
